@@ -19,7 +19,6 @@ pipeline {
                     body: "build log attached!"
                 }
             }
-     
         }
         stage('Test') {
             steps {
@@ -47,7 +46,12 @@ pipeline {
         stage('Deploy to production') {
             steps {
                 echo "$PRODUCTION_ENVIRONMENT, Deployment to production started and completed!"
-            }        
+            }
+        }
+        stage('Generate Report') {
+            steps {
+                echo "Report"
+            }   
         }          
     }
 }
