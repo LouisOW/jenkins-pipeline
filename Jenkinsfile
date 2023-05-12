@@ -20,37 +20,50 @@ pipeline {
                 }
             }
         }
-        stage('Test') {
+        stage('Unit and Integration Tests') {
             steps {
-                echo "unit tests"
-                echo "integration tests"
+                bat 'yarn test'
+                bat 'gradle test'
+                junit 'build/test-results/**/*.xml'
             }     
         }
-        stage('Code Quality Check') {
+        stage('Code Analysis') {
             steps {
+                bat 'jenkins-plugin-commander --install "https://plugins.jenkins.io/findbugs/"'
+                bat 'jenkins-plugin-commander --install "https://plugins.jenkins.io/checkstyle/"'
+                bat 'jenkins-plugin-commander --install "https://plugins.jenkins.io/pmd/"'
+                bat 'gradle findBugsMain'
+                bat 'gradle checkstyleMain'
+                bat 'gradle pmdMain'
                 echo "check the quality of the code"
             }
         }        
-        stage('Deploy') {
+        stage('Security Scan') {
             steps {
+                bat 'jenkins-plugin-commander --install "https://plugins.jenkins.io/owasp-dependency-check/"'
+                bat 'gradle dependencyCheck'
                 echo "deploy the application to a $TESTING_ENVIRONMENT specified by the environment variable"
                 
             }        
         }
-        stage('Approval') {
+        stage('Deploy to Staging') {
             steps {
-                sleep 10
-                echo "Approval requested and approved!"
+                bat 'jenkins-plugin-commander --install "https://plugins.jenkins.io/aws-elastic-beanstalk/"'
+                bat 'aws-elastic-beanstalk deploy --env testing'
             }        
         }
-        stage('Deploy to production') {
+        stage('Integration Tests on Staging') {
             steps {
-                echo "$PRODUCTION_ENVIRONMENT, Deployment to production started and completed!"
+                bat 'jenkins-plugin-commander --install "https://plugins.jenkins.io/selenium/"'
+                bat 'selenium run --env testing'
+                
             }
         }
-        stage('Generate Report') {
+        stage('Deploy to production!') {
             steps {
-                echo "Report"
+                bat 'jenkins-plugin-commander --install "https://plugins.jenkins.io/aws-elastic-beanstalk/"'
+                bat 'aws-elastic-beanstalk deploy --env production'
+                echo "$PRODUCTION_ENVIRONMENT, Deployment to production completed!"
             }   
         }          
     }
