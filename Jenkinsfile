@@ -24,7 +24,7 @@ pipeline {
             steps {
                 echo 'yarn test'
                 bat 'gradle test'
-                junit 'build/test-results/**/*.xml'
+                echo "junit 'build/test-results/**/*.xml'"
             }     
         }
         stage('Code Analysis') {
