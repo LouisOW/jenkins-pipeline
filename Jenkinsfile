@@ -9,8 +9,8 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo "fetch the source code from the $DIRECTORY_PATH specified by the environment variable"
-                echo "compile the code and generate any necessary artifacts"
+                bat 'yarn install'
+                bat 'gradle build'
             }
             post{
                 always{
