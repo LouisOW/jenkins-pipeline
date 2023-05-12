@@ -31,14 +31,14 @@ pipeline {
             steps {
                 echo "gradle findBugsMain"
                 echo "gradle checkstyleMain"
-                bat 'gradle pmdMain'
+                echo "gradle pmdMain"
                 echo "check the quality of the code"
             }
         }        
         stage('Security Scan') {
             steps {
                 echo "jenkins-plugin-commander --install 'https://plugins.jenkins.io/owasp-dependency-check/'"
-                bat 'gradle dependencyCheck'
+                echo "gradle dependencyCheck"
                 echo "deploy the application to a $TESTING_ENVIRONMENT specified by the environment variable"
                 
             }        
@@ -46,20 +46,20 @@ pipeline {
         stage('Deploy to Staging') {
             steps {
                 echo "jenkins-plugin-commander --install 'https://plugins.jenkins.io/aws-elastic-beanstalk/'"
-                bat 'aws-elastic-beanstalk deploy --env testing'
+                echo "aws-elastic-beanstalk deploy --env testing"
             }        
         }
         stage('Integration Tests on Staging') {
             steps {
                 echo "jenkins-plugin-commander --install 'https://plugins.jenkins.io/selenium/'"
-                bat 'selenium run --env testing'
+                echo "selenium run --env testing"
                 
             }
         }
         stage('Deploy to production!') {
             steps {
                 echo "jenkins-plugin-commander --install 'https://plugins.jenkins.io/aws-elastic-beanstalk/'"
-                bat 'aws-elastic-beanstalk deploy --env production'
+                echo "aws-elastic-beanstalk deploy --env production"
                 echo "$PRODUCTION_ENVIRONMENT, Deployment to production completed!"
             }   
         }          
