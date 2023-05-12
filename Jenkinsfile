@@ -45,7 +45,7 @@ pipeline {
         }
         stage('Deploy to Staging') {
             steps {
-                echo "jenkins-plugin-commander --install "https://plugins.jenkins.io/aws-elastic-beanstalk/'"
+                echo "jenkins-plugin-commander --install 'https://plugins.jenkins.io/aws-elastic-beanstalk/'"
                 bat 'aws-elastic-beanstalk deploy --env testing'
             }        
         }
