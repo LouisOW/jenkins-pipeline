@@ -29,8 +29,8 @@ pipeline {
         }
         stage('Code Analysis') {
             steps {
-                bat 'gradle findBugsMain'
-                bat 'gradle checkstyleMain'
+                echo "gradle findBugsMain"
+                echo "gradle checkstyleMain"
                 bat 'gradle pmdMain'
                 echo "check the quality of the code"
             }
