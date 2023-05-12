@@ -29,9 +29,6 @@ pipeline {
         }
         stage('Code Analysis') {
             steps {
-                bat 'jenkins-plugin-commander --install "https://plugins.jenkins.io/findbugs/"'
-                bat 'jenkins-plugin-commander --install "https://plugins.jenkins.io/checkstyle/"'
-                bat 'jenkins-plugin-commander --install "https://plugins.jenkins.io/pmd/"'
                 bat 'gradle findBugsMain'
                 bat 'gradle checkstyleMain'
                 bat 'gradle pmdMain'
@@ -40,7 +37,7 @@ pipeline {
         }        
         stage('Security Scan') {
             steps {
-                bat 'jenkins-plugin-commander --install "https://plugins.jenkins.io/owasp-dependency-check/"'
+                echo "jenkins-plugin-commander --install 'https://plugins.jenkins.io/owasp-dependency-check/'"
                 bat 'gradle dependencyCheck'
                 echo "deploy the application to a $TESTING_ENVIRONMENT specified by the environment variable"
                 
@@ -48,20 +45,20 @@ pipeline {
         }
         stage('Deploy to Staging') {
             steps {
-                bat 'jenkins-plugin-commander --install "https://plugins.jenkins.io/aws-elastic-beanstalk/"'
+                echo "jenkins-plugin-commander --install "https://plugins.jenkins.io/aws-elastic-beanstalk/'"
                 bat 'aws-elastic-beanstalk deploy --env testing'
             }        
         }
         stage('Integration Tests on Staging') {
             steps {
-                bat 'jenkins-plugin-commander --install "https://plugins.jenkins.io/selenium/"'
+                echo "jenkins-plugin-commander --install 'https://plugins.jenkins.io/selenium/'"
                 bat 'selenium run --env testing'
                 
             }
         }
         stage('Deploy to production!') {
             steps {
-                bat 'jenkins-plugin-commander --install "https://plugins.jenkins.io/aws-elastic-beanstalk/"'
+                echo "jenkins-plugin-commander --install 'https://plugins.jenkins.io/aws-elastic-beanstalk/'"
                 bat 'aws-elastic-beanstalk deploy --env production'
                 echo "$PRODUCTION_ENVIRONMENT, Deployment to production completed!"
             }   
